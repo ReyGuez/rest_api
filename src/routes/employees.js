@@ -5,7 +5,7 @@ const mysqlConnection  = require('../database.js');
 
 // GET all Employees
 router.get('/api/get_values', (req, res) => {
-  mysqlConnection.query('SELECT * FROM `2020-10-01`', (err, rows, fields) => {
+  mysqlConnection.query('SELECT * FROM `sensores`', (err, rows, fields) => {
     if(!err) {
       res.json(rows);
     } else {
@@ -41,17 +41,21 @@ router.get('/api/get_values', (req, res) => {
 
 // INSERT An Employee
 router.post('/api/add_values', (req, res) => {
-  const {dc, voltage} = req.body;
-  console.log(dc, voltage);
+  const {id, location, voltage, corriente, nivel, ph, fecha} = req.body;
+  console.log(id, location, voltage, corriente, nivel, ph, fecha);
   const query = `
-    SET @dc = ?;
-    SET @voltage = ?;
     SET @id = ?;
-    CALL employeeAddOrEdit(@dc, @voltage, @id);
+    SET @location = ?;
+    SET @voltage = ?;
+    SET @corriente = ?;
+    SET @nivel = ?;
+    SET @ph = ?;
+    SET @fecha = ?;
+    CALL insert_data(@id, @location, @voltage, @corriente, @nivel, @ph, @fecha);
   `;
-  mysqlConnection.query(query, [dc, voltage, 0], (err, rows, fields) => {
+  mysqlConnection.query(query, [0, location, voltage, corriente, nivel, ph, new Date()], (err, rows, fields) => {
     if(!err) {
-      res.json({status: 'Employeed Saved'});
+      res.json({status: 'Data Saved'});
     } else {
       console.log(err);
     }
